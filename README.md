@@ -61,5 +61,5 @@ The installation process:
    1. If RPI has audio output device, plug in earbuds, external speaker/amplifier
    2. If you configured rtl_airband.conf to use Icecast, check your icecast server. For the configured example browse:
         ```
-        http://192.162.1.3:8000/atc1.mp3
+        http://192.162.1.3:8000/atc.mp3
         ```
