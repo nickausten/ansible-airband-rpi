@@ -56,10 +56,10 @@ The installation process:
     ```
     ansible-playbook -i inventory airband.yml
     ```
-5. Wait until finished - will take minutes and modre - depending on internet speed
+5. Wait until finished - will take minutes and more - depending on internet speed
 6. Check:
    1. If RPI has audio output device, plug in earbuds, external speaker/amplifier
-   2. If you configured rtl_airband.conf to use Icecast, check your icecast server. FOr the configured example browse:
+   2. If you configured rtl_airband.conf to use Icecast, check your icecast server. For the configured example browse:
         ```
         http://192.162.1.3:8000/atc1.mp3
         ```
