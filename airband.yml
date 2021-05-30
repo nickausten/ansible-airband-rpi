@@ -1,0 +1,101 @@
+---
+- name: Install RTL_Airband and run it (pulseaudio).
+  hosts: all
+
+  tasks:
+    - name: Update all packages.
+      become: yes
+      apt:
+        upgrade: yes
+        update_cache: yes
+        cache_valid_time: 86400 #One day
+
+    - name: Install required building tools.
+      become: yes
+      apt:
+        name:
+          - git
+          - build-essential
+          - libmp3lame-dev
+          - libshout3-dev
+          - libconfig++-dev
+          - libraspberrypi-dev
+          - libfftw3-dev
+          - librtlsdr-dev
+          - libpulse-dev
+          - rtl-sdr
+          - htop
+          - pulseaudio
+          - alsa-utils
+          - alsa-tools
+        state: present
+
+    - name: Git clone rtl_airband repo.
+      ansible.builtin.git:
+        repo: 'https://github.com/szpajder/RTLSDR-Airband.git'
+        dest: /home/pi/rtl_airband
+        clone: yes
+        update: no
+
+    - name: Build RTL_Airband.
+      make:
+        chdir: /home/pi/rtl_airband
+        target: rtl_airband
+        params:
+          PULSE: 1
+          PLATFORM: rpiv1
+      changed_when: false
+
+    - name: Install RTL_Airband.
+      become: yes
+      make:
+        chdir: /home/pi/rtl_airband
+        target: install
+        params:
+          PULSE: 1
+          PLATFORM: rpiv1
+      changed_when: false
+
+    - name: Copy airband service file.
+      become: yes
+      copy:
+        src: /home/pi/rtl_airband/init.d/rtl_airband.service
+        dest: /etc/systemd/system/
+        remote_src: yes
+
+    - name: Copy airband config file.
+      become: yes
+      copy:
+        src: rtl_airband.conf
+        dest: /usr/local/etc/
+
+    - name: Copy in custom pulseaudio service file.
+      become: yes
+      copy:
+        src: pulseaudio.service
+        dest: /etc/systemd/system/
+
+    - name: Enable pulseaudio local network access.
+      become: yes
+      copy:
+        src: default.pa
+        dest: /etc/pulse/
+
+    - name: Enable pulseaudio service.
+      become: yes
+      ansible.builtin.service:
+        name: pulseaudio
+        enabled: yes
+        state: started
+
+    - name: Enable rtl_airband service.
+      become: yes
+      ansible.builtin.service:
+        name: rtl_airband
+        enabled: yes
+        state: started
+
+    - name: Reboot
+      become: yes
+      reboot:
+

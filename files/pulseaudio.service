@@ -1,0 +1,15 @@
+[Unit]
+Description=PulseAudio system server
+
+[Service]
+Type=notify
+#Exec=pulseaudio --daemonize=no --system --realtime --log-target=journal
+#ExecStart=/usr/bin/pulseaudio --daemonize=no --system --realtime --log-target=journal --disallow-exit
+ExecStart=/usr/bin/pulseaudio --daemonize=no --realtime --log-target=journal --disallow-exit --disallow-module-loading
+ExecStop=/usr/bin/pulseaudio -k
+Restart=on-failure
+#LimitRTPRIO=1000
+#LimitNICE=-20
+
+[Install]
+WantedBy=multi-user.target
